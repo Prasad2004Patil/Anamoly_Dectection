@@ -4,6 +4,7 @@
   URL: http://0.0.0.0:8501
 
   For better performance, install the Watchdog module:
+  // this is new code
 
   $ xcode-select --install
   $ pip install watchdog
