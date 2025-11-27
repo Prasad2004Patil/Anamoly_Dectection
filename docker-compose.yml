@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    image: anomaly_api:latest
+    container_name: anomaly_api
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./artifacts:/app/artifacts
+      - ./logs_local.json:/app/logs_local.json
+    environment:
+      - MONGO_URI=${MONGO_URI:-}
+      - MONGO_DBNAME=${MONGO_DBNAME:-anomaly_db}
+
+  dashboard:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    image: anomaly_dashboard:latest
+    container_name: anomaly_dashboard
+    ports:
+      - "8501:8501"
+    depends_on:
+      - api
+    environment:
+      - API_URL=http://api:5000
+    volumes:
+      - ./logs_local.json:/app/logs_local.json
+      - ./artifacts:/app/artifacts

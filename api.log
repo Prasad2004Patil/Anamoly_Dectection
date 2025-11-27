@@ -1,0 +1,11 @@
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+[1m 1/32[0m [37m━━━━━━━━━━━━━━━━━━━━[0m [1m0s[0m 24ms/step[1m32/32[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m0s[0m 838us/step
+/Users/prasadpatil/anamoly_project/api/app.py:100: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  log_rec = {"timestamp": __import__("datetime").datetime.utcnow().isoformat(), "record": rec}
+127.0.0.1 - - [31/Oct/2025 08:55:53] "POST /predict HTTP/1.1" 200 -
