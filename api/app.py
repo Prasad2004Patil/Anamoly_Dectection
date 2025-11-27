@@ -5,7 +5,56 @@ import sys
 import json
 import traceback
 from pathlib import Path
+# --- Add imports at the top ---
+import bcrypt
 
+# --- Inside your DB setup section (after defining logs_collection) ---
+users_collection = None
+if db_client:
+    users_collection = db.get_collection("users")
+
+# --- Add these new endpoints before if __name__ == "__main__": ---
+
+@app.route("/auth/register", methods=["POST"])
+def register():
+    try:
+        data = request.get_json()
+        username = data.get("username")
+        password = data.get("password")
+
+        if not username or not password:
+            return jsonify({"error": "Username and password required"}), 400
+
+        if users_collection.find_one({"username": username}):
+            return jsonify({"error": "User already exists"}), 409
+
+        # Hash password
+        hashed = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+        
+        users_collection.insert_one({
+            "username": username,
+            "password": hashed
+        })
+        return jsonify({"message": "User created successfully"}), 201
+    except Exception as e:
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/auth/login", methods=["POST"])
+def login():
+    try:
+        data = request.get_json()
+        username = data.get("username")
+        password = data.get("password")
+
+        user = users_collection.find_one({"username": username})
+        
+        if user and bcrypt.checkpw(password.encode('utf-8'), user["password"]):
+            return jsonify({"status": "success", "username": username}), 200
+        else:
+            return jsonify({"error": "Invalid credentials"}), 401
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 # ensure project root is on path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
